@@ -7,10 +7,9 @@ class genTable{
 	private $id;
 	private $name;
 	public function __construct(){
-		$this->class = new stdClass();
-		$this->class->table = "";
-		$this->class->th = "";
-		$this->class->tr = "";
+		$this->class['table'] = "";
+		$this->class['th'] = "";
+		$this->class['tr'] = "";
 		$this->id = "";
 		$this->name = "";
 	}
@@ -29,25 +28,25 @@ class genTable{
 		$this->name = empty($tmp_name) ? "" : " name='".$tmp_name."'";
 	}
 	public function setClass($tmp_class){ //set header
-		$this->class->table = empty($tmp_class->table) ? "" : " class='".$tmp_class->table."'";
-		$this->class->tr = empty($tmp_class->tr) ? "" : " class='".$tmp_class->tr."'";
-		$this->class->th = empty($tmp_class->th) ? "" : " class='".$tmp_class->th."'";
+		$this->class['table'] = empty($tmp_class['table']) ? "" : " class='".$tmp_class['table']."'";
+		$this->class['tr'] = empty($tmp_class['tr']) ? "" : " class='".$tmp_class['tr']."'";
+		$this->class['th'] = empty($tmp_class['th']) ? "" : " class='".$tmp_class['th']."'";
 	}
 	public function makeTable(){ //generate tabel
 		if(empty($this->content)) return "Error ! Isi tabel harus ditentukan -> setContent(array[])";
 		else if(empty($this->header)) return "Error ! Heading tabel harus ditentukan -> setHeader(array[])";
 		else {
-			$this->result = "<table".$this->id.$this->name.$this->class->table."><thead><tr".$this->class->tr.">";
+			$this->result = "<table".$this->id.$this->name.$this->class['table']."><thead><tr".$this->class['tr'].">";
 			foreach($this->header as $h){
-				$this->result .= "<th".$this->class->th.">".$h."</th>";
+				$this->result .= "<th".$this->class['th'].">".$h."</th>";
 				}
 			$this->result .= "</tr></thead>";
 			$this->result .= "<tbody>";
-			foreach($this->content as $tr){
-				$this->result .= "<tr".$this->class->tr.">";
-				foreach($tr as $td){
-					$this->result .= "<td>".$td."</td>";
-					}
+			foreach($this->content as $tr){  //looping isi content
+				$this->result .= "<tr".$this->class['tr'].">"; //buat baris
+				foreach($this->header as $h){ //looping lagi ke header
+					$this->result .= "<td>".$tr[$h]."</td>"; //tampilkan isi konten berdasarkan nama index dari header
+				}
 				$this->result .= "</tr>";
 				}
 			$this->result .= "</tbody></table>";
@@ -55,4 +54,35 @@ class genTable{
 		}
 	}
 	}
+//CONTOH PENGGUNAAN
+/*
+include "template/genTable.php";
+$isi = [
+	[
+		"Nama"=>"Nama 1",
+		"Kelas"=>"Kelas 1"
+	],
+	[
+		"Nama"=>"Nama 2",
+		"Kelas"=>"Kelas 2"
+	],
+	[
+		"Nama"=>"Nama 3",
+		"Kelas"=>"Kelas 4"
+	]
+];
+$attr = [
+	"table"=>"w3-table",
+	"tr"=>"w3-white",
+	"th"=>"w3-teal",
+	"td"=>"w3-blue"
+];
+$tabel = new genTable();
+$tabel->setId("ID tabel");
+$tabel->setName("nama tabel");
+$tabel->setContent($isi);
+$tabel->setHeader(["Nama","Kelas"]);
+$tabel->setClass($attr);
+echo $tabel->makeTable(); 
+ */
 ?>
